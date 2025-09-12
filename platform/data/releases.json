@@ -1,0 +1,23 @@
+{
+  "releases_by_version": {
+    "1.0.0": {
+      "version": "1.0.0",
+      "channel": "stable",
+      "url": "/download/1.0.0",
+      "sha256": "05ba3842c13ff12c0d62ace125586481c477d7784edcafa7a580f4b732fcd414",
+      "notes": "",
+      "created_at": "2025-09-12T11:42:32.751779846+08:00"
+    },
+    "1.1.0": {
+      "version": "1.1.0",
+      "channel": "stable",
+      "url": "/download/1.1.0",
+      "sha256": "05ba3842c13ff12c0d62ace125586481c477d7784edcafa7a580f4b732fcd414",
+      "notes": "",
+      "created_at": "2025-09-12T11:42:57.392363938+08:00"
+    }
+  },
+  "latest_by_channel": {
+    "stable": "1.1.0"
+  }
+}

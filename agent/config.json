@@ -1,0 +1,7 @@
+{
+  "server_url": "http://127.0.0.1:8080",
+  "device_id": "drone-001",
+  "channel": "stable",
+  "install_dir": "/tmp/algos/drone-001",
+  "check_every_seconds": 5
+}
