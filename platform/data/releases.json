@@ -2,22 +2,23 @@
   "releases_by_version": {
     "1.0.0": {
       "version": "1.0.0",
-      "channel": "stable",
+      "channel": "beta",
       "url": "/download/1.0.0",
-      "sha256": "05ba3842c13ff12c0d62ace125586481c477d7784edcafa7a580f4b732fcd414",
-      "notes": "",
-      "created_at": "2025-09-12T11:42:32.751779846+08:00"
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "notes": "first",
+      "created_at": "2025-09-26T14:27:17.301848896+08:00"
     },
     "1.1.0": {
       "version": "1.1.0",
-      "channel": "stable",
+      "channel": "beta",
       "url": "/download/1.1.0",
-      "sha256": "05ba3842c13ff12c0d62ace125586481c477d7784edcafa7a580f4b732fcd414",
-      "notes": "",
-      "created_at": "2025-09-12T11:42:57.392363938+08:00"
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "notes": "first",
+      "created_at": "2025-09-26T14:32:43.302496981+08:00"
     }
   },
   "latest_by_channel": {
+    "beta": "1.1.0",
     "stable": "1.1.0"
   }
 }
