@@ -13,5 +13,6 @@ func SetRouters(r *gin.Engine) {
 	fileAPI := &controller.FileController{}
 	{
 		v1.POST("/publish", fileAPI.Publish)
+		v1.GET("/check", fileAPI.Check)
 	}
 }

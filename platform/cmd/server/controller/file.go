@@ -6,9 +6,11 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -43,6 +45,16 @@ var (
 		LatestByChannel:   map[string]string{},
 	}
 )
+
+func loadStore() error {
+	f, err := os.Open(storeFile)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	dec := json.NewDecoder(f)
+	return dec.Decode(store)
+}
 
 func saveStore() error {
 	if err := os.MkdirAll(filepath.Dir(storeFile), 0755); err != nil {
@@ -137,4 +149,64 @@ func (c *FileController) Publish(g *gin.Context) {
 	}
 
 	g.JSON(http.StatusOK, rel)
+}
+
+func isNewer(a, b string) bool {
+	// Compare SemVer-like: "MAJ.MIN.PATCH[-extra]" (very simple)
+	parse := func(s string) (int, int, int) {
+		s = strings.SplitN(s, "-", 2)[0]
+		parts := strings.Split(s, ".")
+		get := func(i int) int {
+			if i >= len(parts) {
+				return 0
+			}
+			n, _ := strconv.Atoi(parts[i])
+			return n
+		}
+		return get(0), get(1), get(2)
+	}
+
+	amaj, amin, apat := parse(a)
+	bmaj, bmin, bpat := parse(b)
+
+	if amaj != bmaj {
+		return amaj > bmaj
+	}
+	if amin != bmin {
+		return amin > bmin
+	}
+	return apat > bpat
+}
+
+func (c *FileController) Check(g *gin.Context) {
+	if err := loadStore(); err != nil {
+		log.Printf("loadStore warn: %v", err)
+	}
+
+	channel := g.DefaultQuery("channel", "stable")
+	current := g.Query("current")
+
+	store.mu.RLock()
+	defer store.mu.RUnlock()
+
+	latestVersion, ok := store.LatestByChannel[channel]
+	if !ok {
+		c.ResponseFailure(g, ErrInternal, "no release in channel")
+		return
+	}
+
+	latest := store.ReleasesByVersion[latestVersion]
+
+	resp := gin.H{
+		"update_available": false,
+		"latest":           latest,
+		"message":          "up to date",
+	}
+
+	if current == "" || isNewer(latest.Version, current) {
+		resp["update_available"] = true
+		resp["message"] = "new version available"
+	}
+
+	g.JSON(http.StatusOK, resp)
 }
