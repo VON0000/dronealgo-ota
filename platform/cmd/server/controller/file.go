@@ -74,6 +74,9 @@ func saveStore() error {
 }
 
 func (c *FileController) Publish(g *gin.Context) {
+	// 可选：限制单接口上传大小（例如 50MB）
+	g.Request.Body = http.MaxBytesReader(g.Writer, g.Request.Body, 100<<20)
+
 	version := strings.TrimSpace(g.PostForm("version"))
 	if version == "" {
 		c.ResponseFailure(g, ErrParam, "version is required")
@@ -92,9 +95,6 @@ func (c *FileController) Publish(g *gin.Context) {
 		c.ResponseFailure(g, ErrParam, "missing file: "+err.Error())
 		return
 	}
-
-	// 可选：限制单接口上传大小（例如 50MB）
-	g.Request.Body = http.MaxBytesReader(g.Writer, g.Request.Body, 100<<20)
 
 	vDir := filepath.Join(artDir, version)
 	if err := os.MkdirAll(vDir, 0755); err != nil {
