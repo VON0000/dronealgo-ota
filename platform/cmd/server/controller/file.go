@@ -77,6 +77,7 @@ func (c *FileController) Publish(g *gin.Context) {
 	version := strings.TrimSpace(g.PostForm("version"))
 	if version == "" {
 		c.ResponseFailure(g, ErrParam, "version is required")
+		return
 	}
 
 	channel := strings.TrimSpace(g.PostForm("channel"))
@@ -89,6 +90,7 @@ func (c *FileController) Publish(g *gin.Context) {
 	fileHeader, err := g.FormFile("file")
 	if err != nil {
 		c.ResponseFailure(g, ErrParam, "missing file: "+err.Error())
+		return
 	}
 
 	// 可选：限制单接口上传大小（例如 50MB）
@@ -97,6 +99,7 @@ func (c *FileController) Publish(g *gin.Context) {
 	vDir := filepath.Join(artDir, version)
 	if err := os.MkdirAll(vDir, 0755); err != nil {
 		c.ResponseFailure(g, ErrInternal, err.Error())
+		return
 	}
 	dstPath := filepath.Join(vDir, "algorithm")
 	dst, err := os.Create(dstPath)
