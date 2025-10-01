@@ -109,13 +109,6 @@ func (c *FileController) Publish(g *gin.Context) {
 	}
 	defer dst.Close()
 
-	f, err := os.Open(dstPath)
-	if err != nil {
-		c.ResponseFailure(g, ErrInternal, "open dst: "+err.Error())
-		return
-	}
-	defer f.Close()
-
 	src, err := fileHeader.Open()
 	if err != nil {
 		c.ResponseFailure(g, ErrInternal, "open upload: "+err.Error())
@@ -124,7 +117,7 @@ func (c *FileController) Publish(g *gin.Context) {
 	defer src.Close()
 
 	h := sha256.New()
-	if _, err := io.Copy(io.MultiWriter(dst, h), f); err != nil {
+	if _, err := io.Copy(io.MultiWriter(dst, h), src); err != nil {
 		c.ResponseFailure(g, ErrInternal, "hash: "+err.Error())
 		return
 	}
