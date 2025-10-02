@@ -78,8 +78,10 @@ func saveStore() error {
 	if err != nil {
 		return err
 	}
-	if err := json.NewEncoder(f).Encode(store); err != nil {
-		_ = f.Close()
+	enc := json.NewEncoder(f)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(store); err != nil {
+		f.Close()
 		return err
 	}
 	_ = f.Close()
