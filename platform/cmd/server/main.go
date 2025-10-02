@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/net/http2"
@@ -53,6 +54,12 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	_ = s.Close()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := s.Shutdown(ctx); err != nil {
+		log.Printf("server shutdown: %v", err)
+		_ = s.Close()
+	}
 	log.Println("server exited")
 }
