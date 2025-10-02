@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/net/http2"
@@ -45,7 +46,7 @@ func main() {
 	}
 	go func() {
 		log.Printf("server listening on %s", *addr)
-		if err := s.ListenAndServe(); err != nil {
+		if err := s.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("listen error: %v", err)
 		}
 	}()
