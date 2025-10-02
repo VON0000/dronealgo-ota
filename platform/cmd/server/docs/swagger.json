@@ -1,0 +1,153 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "OTA platform for drone avoidance algorithms.",
+        "title": "DroneAlgo-OTA API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "basePath": "/",
+    "paths": {
+        "/api/v1/check": {
+            "get": {
+                "description": "Check whether a newer version is available under the channel.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "release"
+                ],
+                "summary": "Check for updates",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Channel (stable|beta), default: stable",
+                        "name": "channel",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Current version on device",
+                        "name": "current",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "update_available, latest, message",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/publish": {
+            "post": {
+                "description": "Upload the algorithm binary and create a release record.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "release"
+                ],
+                "summary": "Publish an algorithm artifact",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Version (e.g. 1.1.0)",
+                        "name": "version",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Channel (stable|beta), default: stable",
+                        "name": "channel",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Release notes",
+                        "name": "notes",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "Algorithm binary",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controller.Release"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "controller.Release": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "description": "e.g. \"stable\", \"beta\"",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "sha256": {
+                    "type": "string"
+                },
+                "url": {
+                    "description": "relative: /download/\u003cversion\u003e",
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

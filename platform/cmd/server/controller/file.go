@@ -95,6 +95,20 @@ func saveStore() error {
 	return os.Rename(tmp, storeFile)
 }
 
+// Publish godoc
+// @Summary      Publish an algorithm artifact
+// @Description  Upload the algorithm binary and create a release record.
+// @Tags         release
+// @Accept       mpfd
+// @Produce      json
+// @Param        version  formData  string  true   "Version (e.g. 1.1.0)"
+// @Param        channel  formData  string  false  "Channel (stable|beta), default: stable"
+// @Param        notes    formData  string  false  "Release notes"
+// @Param        file     formData  file    true   "Algorithm binary"
+// @Success      200  {object}  controller.Release
+// @Failure      400  {object}  map[string]any
+// @Failure      500  {object}  map[string]any
+// @Router       /api/v1/publish [post]
 func (c *FileController) Publish(g *gin.Context) {
 	// 可选：限制单接口上传大小（例如 50MB）
 	g.Request.Body = http.MaxBytesReader(g.Writer, g.Request.Body, 100<<20)
@@ -196,6 +210,17 @@ func isNewer(a, b string) bool {
 	return apat > bpat
 }
 
+// Check godoc
+// @Summary      Check for updates
+// @Description  Check whether a newer version is available under the channel.
+// @Tags         release
+// @Produce      json
+// @Param        channel  query  string  false  "Channel (stable|beta), default: stable"
+// @Param        current  query  string  false  "Current version on device"
+// @Success      200  {object}  map[string]any  "update_available, latest, message"
+// @Failure      400  {object}  map[string]any
+// @Failure      500  {object}  map[string]any
+// @Router       /api/v1/check [get]
 func (c *FileController) Check(g *gin.Context) {
 	if err := loadStore(); err != nil {
 		log.Printf("loadStore warn: %v", err)

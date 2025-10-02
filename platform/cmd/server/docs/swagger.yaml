@@ -1,0 +1,103 @@
+basePath: /
+definitions:
+  controller.Release:
+    properties:
+      channel:
+        description: e.g. "stable", "beta"
+        type: string
+      created_at:
+        type: string
+      notes:
+        type: string
+      sha256:
+        type: string
+      url:
+        description: 'relative: /download/<version>'
+        type: string
+      version:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: OTA platform for drone avoidance algorithms.
+  title: DroneAlgo-OTA API
+  version: "1.0"
+paths:
+  /api/v1/check:
+    get:
+      description: Check whether a newer version is available under the channel.
+      parameters:
+      - description: 'Channel (stable|beta), default: stable'
+        in: query
+        name: channel
+        type: string
+      - description: Current version on device
+        in: query
+        name: current
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: update_available, latest, message
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Check for updates
+      tags:
+      - release
+  /api/v1/publish:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload the algorithm binary and create a release record.
+      parameters:
+      - description: Version (e.g. 1.1.0)
+        in: formData
+        name: version
+        required: true
+        type: string
+      - description: 'Channel (stable|beta), default: stable'
+        in: formData
+        name: channel
+        type: string
+      - description: Release notes
+        in: formData
+        name: notes
+        type: string
+      - description: Algorithm binary
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.Release'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Publish an algorithm artifact
+      tags:
+      - release
+swagger: "2.0"

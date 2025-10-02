@@ -14,6 +14,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/von0000/dronealgo-ota/platform/cmd/server/docs"
+
 	"github.com/von0000/dronealgo-ota/platform/cmd/server/controller"
 	"github.com/von0000/dronealgo-ota/platform/cmd/server/router"
 )
@@ -28,6 +30,8 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	h2s := &http2.Server{}
 	g := gin.Default()
+
+	docs.SwaggerInfo.BasePath = "/"
 
 	// 进程启动时尝试加载一次 store（见 file.go 中的 Export 函数）
 	err := controller.InitStore()

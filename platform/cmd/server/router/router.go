@@ -8,7 +8,13 @@ import (
 )
 
 func SetRouters(r *gin.Engine) {
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/swagger/*any",
+		ginSwagger.WrapHandler(
+			swaggerFiles.Handler,
+			ginSwagger.InstanceName("swagger"),  // ← 关键
+			ginSwagger.URL("/swagger/doc.json"), // 可选，显式指定文档地址
+		),
+	)
 	v1 := r.Group("/api/v1")
 	fileAPI := &controller.FileController{}
 	{
