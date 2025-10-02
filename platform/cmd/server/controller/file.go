@@ -46,6 +46,13 @@ var (
 	}
 )
 
+func InitStore() error {
+	if err := loadStore(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func loadStore() error {
 	f, err := os.Open(storeFile)
 	if err != nil {
