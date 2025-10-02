@@ -52,8 +52,21 @@ func loadStore() error {
 		return err
 	}
 	defer f.Close()
-	dec := json.NewDecoder(f)
-	return dec.Decode(store)
+
+	tmp := &Store{}
+	tmp.ReleasesByVersion = map[string]*Release{}
+	tmp.LatestByChannel = map[string]string{}
+
+	if err := json.NewDecoder(f).Decode(tmp); err != nil {
+		return err
+	}
+
+	store.mu.Lock()
+	defer store.mu.Unlock()
+
+	store.ReleasesByVersion = tmp.ReleasesByVersion
+	store.LatestByChannel = tmp.LatestByChannel
+	return nil
 }
 
 func saveStore() error {
