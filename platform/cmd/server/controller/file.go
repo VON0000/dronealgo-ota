@@ -253,3 +253,34 @@ func (c *FileController) Check(g *gin.Context) {
 
 	g.JSON(http.StatusOK, resp)
 }
+
+// Download godoc
+// @Summary      Download the algorithm binary
+// @Description  Download the algorithm binary for a specific version.
+// @Tags         release
+// @Produce      application/octet-stream
+// @Param        version  path  string  true  "Version (e.g. 1.1.0)"
+// @Success      200  {file}  binary
+// @Failure      400  {object}  map[string]any
+// @Failure      404  {object}  map[string]any
+// @Router       /download/{version} [get]
+func (c *FileController) Download(g *gin.Context) {
+	// /download/<version>
+	version := g.Param("version")
+	if version == "" {
+		c.ResponseFailure(g, ErrParam, "version is required")
+		return
+	}
+
+	store.mu.RLock()
+	rel, ok := store.ReleasesByVersion[version]
+	store.mu.RUnlock()
+	if !ok {
+		c.ResponseFailure(g, ErrParam, "unknown version")
+		return
+	}
+
+	// Serve file
+	g.Header("Content-Disposition", "attachment; filename="+strconv.Quote(filepath.Base(rel.FilePath)))
+	g.File(rel.FilePath)
+}

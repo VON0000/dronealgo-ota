@@ -20,5 +20,6 @@ func SetRouters(r *gin.Engine) {
 	{
 		v1.POST("/publish", fileAPI.Publish)
 		v1.GET("/check", fileAPI.Check)
+		v1.GET("/download/:version", fileAPI.Download)
 	}
 }
